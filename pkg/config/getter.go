@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/ilmimris/poc-go-ulid/pkg/api"
 	"github.com/ilmimris/poc-go-ulid/pkg/env"
 	"github.com/ilmimris/poc-go-ulid/pkg/util"
 	"gopkg.in/yaml.v2"
@@ -123,7 +123,29 @@ func readRemote(defaultConfig map[string]interface{}, uri *url.URL) error {
 		q.Add("env", environ)
 		uri.RawQuery = q.Encode()
 	}
-	if err := api.Get(uri.String()).Execute().Consume(&out); err != nil {
+
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		return errors.New("failed to get config")
+	}
+
+	defer res.Body.Close()
+
+	if res.Body == nil {
+		return errors.New("Response body is empty")
+	}
+
+	err = json.NewDecoder(res.Body).Decode(&out)
+	if err != nil {
 		return err
 	}
 
