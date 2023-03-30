@@ -23,6 +23,9 @@ var rootCmd = &cobra.Command{
 func Run() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config.json", "config file (default is config.json)")
 	rootCmd.AddCommand(restCmd)
+	rootCmd.AddCommand(seedpg)
+	rootCmd.AddCommand(seedmaria)
+	rootCmd.AddCommand(seedmongo)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
