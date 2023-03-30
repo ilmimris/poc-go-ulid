@@ -21,7 +21,7 @@
             "dsn": "root:root@tcp(localhost:3306)/maria?charset=utf8&parseTime=True&loc=UTC"
         },
         "mongodb": {
-            "uri": "mongodb://localhost:27017",
+            "uri": "mongodb://root:root@localhost:27017",
             "db": "mongo",
             "connection_timeout": 10,
             "ping_timeout": 10
